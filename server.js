@@ -2,6 +2,8 @@ import "express-async-errors";
 import express from "express";
 import morgan from "morgan";
 import dotenv from "dotenv";
+import helmet from "helmet";
+import mongoSanitize from "express-mongo-sanitize";
 import jobRouter from "./routers/jobRouter.js";
 import userRouter from "./routers/userRouter.js";
 import authRouter from "./routers/authRouter.js";
@@ -29,14 +31,8 @@ if (process.env.NODE_ENV === "development") {
 app.use(express.static(path.resolve(__dirname, "./client/dist")));
 app.use(cookieParser());
 app.use(express.json());
-
-// HOME PAGE
-app.get("/", (req, res) => {
-  res.send("<h1>Home</h1><a href='/api/v1/jobs'>Jobs</a>");
-});
-app.get("/api/v1/test", (req, res) => {
-  res.json({ msg: "test route" });
-});
+app.use(helmet());
+app.use(mongoSanitize());
 
 // ROUTER
 app.use("/api/v1/jobs", authenticateUser, jobRouter);
